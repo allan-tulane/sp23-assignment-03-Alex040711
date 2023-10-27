@@ -42,8 +42,11 @@ def parens_match_iterative(mylist):
     >>>parens_match_iterative(['('])
     False
     """
-    ### TODO
-    pass
+    # Call iterate function
+    count = iterate(parens_update, 0, mylist)
+    
+    # If count is 0 at the end, parentheses are matched
+    return count == 0
 
 
 def parens_update(current_output, next_input):
@@ -58,8 +61,15 @@ def parens_update(current_output, next_input):
     Returns:
       the updated value of `current_output`
     """
-    ###TODO
-    pass
+    # Check for open parenthesis and increment counter
+    if next_input == '(':
+        return current_output + 1
+    # Check for closed parenthesis and decrement counter
+    elif next_input == ')':
+        return current_output - 1
+    # For non-parenthesis characters, return the current count
+    else:
+        return current_output
 
 
 def test_parens_match_iterative():
@@ -87,8 +97,16 @@ def parens_match_scan(mylist):
     False
     
     """
-    ###TODO
-    pass
+    # 1. Map the input list
+    mapped = list(map(paren_map, mylist))
+
+    # 2. Scan the mapped list
+    scanned, total = scan(min_f, float('inf'), mapped)
+
+    # 3. Check if parens are matched:
+    #    a) the total sum should be 0
+    #    b) there should be no negative prefix sums
+    return total == 0 and all(x >= 0 for x in scanned)
 
 def scan(f, id_, a):
     """
@@ -160,8 +178,21 @@ def parens_match_dc_helper(mylist):
       L is the number of unmatched left parentheses. This output is used by 
       parens_match_dc to return the final True or False value
     """
-    ###TODO
-    pass
+    if not mylist:
+        return (0, 0)
+    
+    if len(mylist) == 1:
+        return (1, 0) if mylist[0] == ')' else (0, 1)
+    
+    mid = len(mylist) // 2
+    left_R, left_L = parens_match_dc_helper(mylist[:mid])
+    right_R, right_L = parens_match_dc_helper(mylist[mid:])
+    
+    # Merge the results
+    R = left_R + max(0, right_R - left_L)
+    L = right_L + max(0, left_L - right_R)
+    
+    return R, L
     
 
 def test_parens_match_dc():
